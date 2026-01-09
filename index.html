@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 创意发散</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        }
+        .node-animation { transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+        body { background-color: white; overflow: hidden; }
+    </style>
+</head>
+<body class="h-screen flex items-center justify-center">
+
+    <div class="absolute top-6 right-6">
+        <button class="bg-black text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-yellow-400 hover:text-black transition-all">历史记录</button>
+    </div>
+
+    <div class="absolute top-0 left-0 w-64 h-64 bg-yellow-400/10 blur-[100px] rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+
+    <div id="nodes-container" class="relative w-full h-full pointer-events-none"></div>
+
+    <div id="input-wrapper" class="absolute left-1/2 -translate-x-1/2 transition-all duration-700 ease-in-out" style="bottom: 50%; transform: translate(-50%, 50%);">
+        <div class="bg-black p-2 rounded-full flex items-center shadow-2xl w-[400px]">
+            <input id="main-input" type="text" placeholder="输入词语激发灵感..." 
+                class="bg-transparent text-white px-6 py-3 outline-none w-full placeholder:text-gray-500">
+            <button onclick="handleStart()" class="bg-yellow-400 w-10 h-10 rounded-full flex items-center justify-center shrink-0">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function handleStart() {
+            const input = document.getElementById('main-input');
+            const wrapper = document.getElementById('input-wrapper');
+            const container = document.getElementById('nodes-container');
+
+            if (input.value.trim() !== "") {
+                // 1. 输入框下移
+                wrapper.style.bottom = "40px";
+                wrapper.style.transform = "translate(-50%, 0)";
+
+                // 2. 模拟生成词语节点
+                container.innerHTML = ''; // 清空
+                const mockWords = [
+                    {zh: '赛博', en: 'Cyber'}, {zh: '极简', en: 'Minimal'}, 
+                    {zh: '共生', en: 'Symbiosis'}, {zh: '流体', en: 'Fluid'}
+                ];
+
+                mockWords.forEach((item, i) => {
+                    setTimeout(() => {
+                        const node = document.createElement('div');
+                        node.className = "absolute glass node-animation rounded-full w-32 h-32 flex flex-col items-center justify-center pointer-events-auto cursor-pointer hover:border-yellow-400 hover:scale-110";
+                        // 随机散开位置
+                        const x = Math.random() * 60 + 20;
+                        const y = Math.random() * 50 + 20;
+                        node.style.left = x + "%";
+                        node.style.top = y + "%";
+                        node.innerHTML = `<span class="font-bold text-black">${item.zh}</span><span class="text-[10px] text-gray-400 mt-1 uppercase">${item.en}</span>`;
+                        container.appendChild(node);
+                    }, i * 150);
+                });
+            }
+        }
+        // 回车触发
+        document.getElementById('main-input').addEventListener('keypress', (e) => { if(e.key === 'Enter') handleStart() });
+    </script>
+</body>
+</html>
